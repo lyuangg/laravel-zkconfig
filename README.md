@@ -1,6 +1,8 @@
 laravel-zkconfig
 ========================================
 
+[简体中文](./README_zh.md)
+
 laravel-zkconfig is a laravel configuration management tool. You can save some configuration information in zookeeper.
 
 ## Instructions

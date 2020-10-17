@@ -13,7 +13,6 @@ class Zk
      *  'cache_path' => 'storage/zkconfig/config.json',
      *  'mode' => 'env|config',
      *  'val_type' => 'key|json',
-     * ]
      *
      * @var array
      */
@@ -21,7 +20,7 @@ class Zk
 
     protected $app;
     protected $zk;
-    protected $watchList = [];
+    protected $watchChildList = [];
 
 
     const VALUE_TYPE_KEY  = 'key';
@@ -223,8 +222,8 @@ class Zk
                 $content = '';
             }
         } else if ($eventType == \Zookeeper::DELETED_EVENT) {
-            if (isset($this->watchList[$path])) {
-                unset($this->watchList[$path]);
+            if (isset($this->watchChildList[$path])) {
+                unset($this->watchChildList[$path]);
             }
         }
         $this->cacheConfig($content);
@@ -237,7 +236,7 @@ class Zk
     public function getConfigFromZk()
     {
         $content = '';
-        $path    = rtrim($this->options['path']);
+        $path    = rtrim($this->options['path'], '/');
         if (strtolower($this->options['val_type']) == static::VALUE_TYPE_JSON) {
             $content = $this->getNodeValue($path);
         } else {
@@ -276,11 +275,13 @@ class Zk
         }
         foreach ($childrenNodes as $node) {
             $nodePath = $path . '/' . $node;
-            if (!isset($this->watchList[$nodePath])) {
-                $this->watchList[$nodePath] = true;
-                $arr[$node]                 = $this->getNodeValue($nodePath);
+            if($isWatch) {
+                if(!isset($this->watchChildList[$nodePath])) {
+                    $this->watchChildList[$nodePath] = true;
+                }
+                $arr[$node] = $this->getNodeValue($nodePath, true);
             } else {
-                $arr[$node] = $this->getNodeValue($nodePath, $isWatch);
+                $arr[$node] = $this->getNodeValue($nodePath);
             }
         }
         return $arr;

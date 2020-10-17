@@ -35,6 +35,22 @@ $app->afterBootstrapping(\Illuminate\Foundation\Bootstrap\LoadConfiguration::cla
      $zk->loadZkConfig();
 });
 ```
+#### lumen
+
+```php
+$app = new Laravel\Lumen\Application(
+    dirname(__DIR__)
+);
+
+$zk = new \Yuancode\ZkConfig\Zk($app);
+$zk->setHost('127.0.0.1:2181')    //zookeeper host
+->setPath('/app/zkconfig/')       //config root path
+->setCachePath(storage_path('zkconfig/config.json')) //config cache path
+->setMode(\Yuancode\ZkConfig\Config::MODE_ENV)  //replace env variable
+->setValType(\Yuancode\ZkConfig\Zk::VALUE_TYPE_KEY) //key,value mode
+->loadZkConfig();  //load config
+```
+
 
 ### Available commands
 #### Cache zk

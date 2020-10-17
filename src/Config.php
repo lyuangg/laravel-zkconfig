@@ -43,13 +43,9 @@ class Config
         $items = $this->getConfigItems();
         if ($items) {
             foreach ($items as $key => $val) {
-                if($this->isLumen()) {
-                    config([$key=>$val]);
-                } else {
-                    $key = str_replace(['.', '-'], ['_', '_'], strtoupper($key));
-                    putenv("$key=$val");
-                    $_ENV[$key] = $val;
-                }
+                $key = str_replace(['.', '-'], ['_', '_'], strtoupper($key));
+                putenv("$key=$val");
+                $_ENV[$key] = $val;
             }
         }
     }
